@@ -3,14 +3,29 @@
 {% block body %}
 <br><br>    <br>
     <h1>Lista de Estudiante</h1>
-    <lu>
 
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>FechaNacimiento</th>
+                <th>Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody>
         {% for estudiante in estudiantes %}
-
-        <li>{{estudiante.nombre}}</li>
-
+            <tr>
+                <td>{{estudiante.nombre}}</td>
+                <td>{{estudiante.edad}}</td>
+                <td>{{estudiante.fechanacimiento | date}}</td>
+                <td><a href="http://voy/app_dev.php/estudiante/{{estudiante.id}}/edit" class="btn btn-primary">
+                       Editar
+                    </a></td>
+            </tr>
         {% endfor %}
-
-    </lu>
+        </tbody>
+    </table>
 
 {% endblock %}

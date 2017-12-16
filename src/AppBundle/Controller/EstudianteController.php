@@ -34,9 +34,12 @@ class EstudianteController extends Controller
     public function listarEstudiant(Request $request)
     {
         //TODO: buscar todos los estudiantes en la base de datos.
-        $estudiantes= $this->getDoctrine()->getRepository(Estudiante::class)->findAll();
+        $estudiantes= $this->getDoctrine()
+            ->getRepository(Estudiante::class)
+            ->findAll();
 
-        return $this->render('AppBundle:Estudiante:estudiante_lista.html.twig', array('estudiantes' => $estudiantes,
+        return $this->render('AppBundle:Estudiante:estudiante_lista.html.twig',
+            array('estudiantes' => $estudiantes,
             ));
     }
     /**
@@ -49,7 +52,7 @@ class EstudianteController extends Controller
     {
         $estudiantes = $this->getDoctrine()->getRepository(Estudiante::class)->findAll();
 
-        $data= $this->get('serializer')->serialize($estudiantes, 'json');
+       $data= $this->get('serializer')->serialize($estudiantes, 'json');
         $listaEstudiante= json_decode($data, true);
 
         return new JsonResponse($listaEstudiante);
@@ -65,6 +68,19 @@ class EstudianteController extends Controller
     {
         $estudiante= json_decode($this ->get('serializer')->serialize($estudiante, 'json'), true);
         return new JsonResponse($estudiante);
+    }
+    /**
+     * * @Route("/{id}/edit", name= "edit_estudiante", requirements={"id"="\d+"} )
+     *
+     * @Method("GET")
+     * @param Request $request
+     * @param Estudiante $estudiante
+     * return JsonResponse
+     */
+    public function EditEstudiantes(Request $request, Estudiante $estudiante)
+    {
+        return $this->render('AppBundle:Estudiante:edit_estudiante.html.twig',
+            array("estudiante" =>$estudiante) );
     }
     /**
      * @Route("/", name= "crear_estudiante")
@@ -96,6 +112,38 @@ class EstudianteController extends Controller
 
         $newEstudiante = json_decode($data,     true);
         return new JsonResponse($newEstudiante);
+
+    }
+    /**
+     * @Route("/{id}", name= "actualizar_estudiante", options={"expose"=true})
+     * @Method({"PUT"})
+     * @param Request $request
+     * @param   Estudiante $estudiante
+     * return JsonResponse
+     */
+    public function ActualizarEstudiante(Request $request, Estudiante $estudiante)
+    {
+
+
+        $data = json_decode($request->getContent(),true);
+        $form = $this->createForm(EstudianteType::class, $estudiante);
+
+        $form->submit($data);
+
+        if ($form->isValid())
+        {
+            $em = $this->getDoctrine()->getManager();
+           // $em->persist($estudiante);
+            $em->flush();
+
+        }
+        else
+        {
+
+        }
+
+        $estudiante= json_decode($this ->get('serializer')->serialize($estudiante, 'json'), true);
+        return new JsonResponse($estudiante);
 
     }
 }
